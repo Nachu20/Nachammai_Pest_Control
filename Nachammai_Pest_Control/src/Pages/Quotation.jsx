@@ -94,21 +94,7 @@ const Quotation = () => {
   };
 
     
-    const quotationData = {
-      clientName,
-      clientAddress,
-      serviceType,
-      selectedServices,
-      totalAmount,
-    };
-
-    try {
-      // Send the data to the backend using Axios
-      const response = await axios.post("/api/quotations", quotationData);
-      console.log("Backend Response:", response.data);
-    } catch (error) {
-      console.error("Error submitting data:", error);
-    }
+    
   };
 
   const handleClose = () => {
