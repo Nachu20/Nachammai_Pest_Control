@@ -67,6 +67,9 @@ const saveQuotationToExcel = (data) => {
   xlsx.writeFile(workbook, filePath);
 };
 
+app.get('/',(req,res)=>{
+  res.send("Hellllooo.........");
+})
 // POST route to handle form submission
 app.post('/api/quotations', async (req, res) => {
   try {
