@@ -35,7 +35,7 @@ const saveQuotationToExcel = (data) => {
   xlsx.writeFile(workbook, filePath);
 };
 
-app.get('/fgf', (req, res) => {
+app.get('/', (req, res) => {
   res.send("Hellllooo.........");
 });
 
