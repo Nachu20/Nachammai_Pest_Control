@@ -35,7 +35,7 @@ const ContactUs = () => {
   } = useForm({ resolver: zodResolver(Schema) });
 
   const sendMail = (formData) => {
-    console.log(formData);
+    
     const serviceID = "service_rpz8s8f"; // service id from emailjs
     const templateID = "template_48u2diq"; // template id from emailjs
     const userID = "oDpIL0_AXnp-RjuNm"; // user id from emailjs

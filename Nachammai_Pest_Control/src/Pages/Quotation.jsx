@@ -1,32 +1,25 @@
+
+
+
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import html2pdf from "html2pdf.js";
+import emailjs from "emailjs-com";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const Quotation = () => {
   const [clientName, setClientName] = useState("");
-  const [clientAddress, setClientAddress] = useState("");
   const [clientEmail, setClientEmail] = useState("");
+  const [clientAddress, setClientAddress] = useState("");
   const [serviceType, setServiceType] = useState("commercial");
   const [selectedServices, setSelectedServices] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [error, setError] = useState(null); // For error handling
-  const [successMessage, setSuccessMessage] = useState(null); // For success feedback
   const pdfRef = useRef(); // Reference for the PDF content
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   const rates = {
-    commercial: {
-      termite: 8,
-      rodent: 2,
-      cockroach: 3,
-    },
-    residential: {
-      termite: 6,
-      rodent: 1,
-      cockroach: 2,
-    },
+    commercial: { termite: 8, rodent: 2, cockroach: 3 },
+    residential: { termite: 6, rodent: 1, cockroach: 2 },
   };
 
   const handleServiceChange = (e, pestService) => {
@@ -52,43 +45,50 @@ const Quotation = () => {
     setSelectedServices(updatedServices);
   };
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = {
-      clientName,
-      clientAddress,
-      clientEmail,
-      serviceType,
-      selectedServices,
-      totalAmount,
-    };
+    // Generate PDF and save it to a file (this is pseudo-code)
+    const pdfElement = pdfRef.current;
+    const pdfFile = await html2pdf().from(pdfElement).save("quotation.pdf"); // Ensure you are saving it correctly
 
     try {
-      // Clear any previous error messages
-      setError(null);
-      setSuccessMessage(null);
+        // Send email with EmailJS
+        await emailjs.send(
+            "service_aec6oll",
+            "template_l7b34k7",
+            {
+                client_name: clientName,
+                client_email: clientEmail,
+                client_address: clientAddress,
+                service_type: serviceType,
+                total_amount: totalAmount,
+                // Instead of sending pdf_data_uri, you can prepare the file for attachment
+            },
+            "oDpIL0_AXnp-RjuNm"
+        );
 
-      // Post the form data to the backend
-      await axios.post("http://localhost:5000/api/quotations", formData);
-      setSuccessMessage("Quotation saved successfully");
+        alert("Quotation Generated successfully!");
 
-      // Generate PDF after successful submission
-      const pdfElement = pdfRef.current;
-      html2pdf().from(pdfElement).save("quotation.pdf");
-
-      // Reset form fields
-      setClientName("");
-      setClientAddress("");
+        // Reset form fields
+        setClientName("");
       setClientEmail("");
+      setClientAddress("");
       setServiceType("commercial");
       setSelectedServices([]);
       setTotalAmount(0);
-    } catch (err) {
-      console.error("Error submitting form: ", err);
-      setError("There was a problem saving the quotation. Please try again.");
+
+        // Download PDF locally
+        html2pdf().from(pdfElement).save("quotation.pdf");
+
+    } catch (error) {
+        console.error("Error sending email:", error);
+        alert("Failed to send quotation.");
     }
-  };
+};
+
 
   const handleClose = () => {
     navigate("/"); // Navigate back to home when closing the modal
@@ -124,11 +124,7 @@ const Quotation = () => {
             Quotation Form
           </h1>
 
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          {successMessage && (
-            <p className="text-green-500 text-center">{successMessage}</p>
-          )}
-
+          {/* Client Info */}
           <div className="mb-4">
             <label className="block text-sm font-bold text-[#18311c]">
               Client Name:
@@ -146,7 +142,7 @@ const Quotation = () => {
               Client Email:
             </label>
             <input
-              type="text"
+              type="email"
               value={clientEmail}
               onChange={(e) => setClientEmail(e.target.value)}
               required
@@ -165,6 +161,8 @@ const Quotation = () => {
               className="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring focus:border-blue-300"
             />
           </div>
+
+          {/* Service Type Selection */}
           <div className="mb-4">
             <label className="block text-sm font-bold text-[#18311c]">
               Service Type:
@@ -179,6 +177,8 @@ const Quotation = () => {
               <option value="residential">Residential</option>
             </select>
           </div>
+
+          {/* Service Selection */}
           <div className="mb-4">
             <label className="block text-sm font-bold text-[#18311c]">
               Pest Services:
@@ -227,8 +227,8 @@ const Quotation = () => {
         <div style={{ display: "none" }}>
           <div
             ref={pdfRef}
-            className="p-6 bg-white shadow-md"
-            style={{ fontFamily: "Arial, sans-serif" }}
+            className="p-6" 
+            style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#ffffff", color: "#000000" }}
           >
             <h1 className="text-2xl font-bold text-center mb-4">Quotation</h1>
             <div className="flex justify-between mb-4">
@@ -326,3 +326,4 @@ const Quotation = () => {
 };
 
 export default Quotation;
+
