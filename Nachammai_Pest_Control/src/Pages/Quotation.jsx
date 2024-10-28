@@ -79,9 +79,7 @@ const Quotation = () => {
       setServiceType("commercial");
       setSelectedServices([]);
       setTotalAmount(0);
-
-        // Download PDF locally
-        html2pdf().from(pdfElement).save("quotation.pdf");
+        
 
     } catch (error) {
         console.error("Error sending email:", error);
